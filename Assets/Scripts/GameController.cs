@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -8,24 +6,25 @@ public class GameController : MonoBehaviour
     [SerializeField] private CrystalController crystalController;
     [SerializeField] private TopBar topBar;
     [SerializeField] private GameObject menuScreen;
-    [SerializeField] private TextMeshProUGUI gameResultText;
+    [SerializeField] private GameObject gameScreen;
     [SerializeField] private GameObject gameOverScreen;
-
+    [SerializeField] private TextMeshProUGUI gameResultText;
     private string winResult = "WIN";
     private string loseResult = "Game Over";
-
     private int moves = 0;
     private int crystalsTarget = 0;
 
     private void Awake()
     {
+        ImageLoader.LoadAll();
+        crystalController.CreatePool();
         ShowMenuScreen();
     }
 
     public void StartGame()
     {
         SetMoves(30);
-        SetGameTarget(10);
+        SetGameTarget(Random.Range(20, 41));
         ShowGameScreen();
     }
 
@@ -46,7 +45,7 @@ public class GameController : MonoBehaviour
     public void ShowMenuScreen()
     {
         RunTime();
-        gameObject.SetActive(false);
+        gameScreen.SetActive(false);
         menuScreen.SetActive(true);
         gameOverScreen.SetActive(false);
     }
@@ -54,7 +53,7 @@ public class GameController : MonoBehaviour
     private void ShowGameScreen()
     {
         PauseTime();
-        gameObject.SetActive(true);
+        gameScreen.SetActive(true);
         menuScreen.SetActive(false);
         gameOverScreen.SetActive(false);
     }
@@ -77,8 +76,9 @@ public class GameController : MonoBehaviour
         crystalsTarget = number;
         topBar.SetTargetNumber(crystalsTarget);
 
-        // Sprite crystal = list[Random.Range(0, 8)];
-        // topBar.SetTargetCrystal(crystal);
+        int imageNumber = ImageLoader.CrystalSprites.Length;
+        Sprite crystal = ImageLoader.CrystalSprites[Random.Range(0, imageNumber)];
+        topBar.SetTargetCrystal(crystal);
     }
 
     private void SetGameResult()
@@ -100,6 +100,11 @@ public class GameController : MonoBehaviour
     private void PauseTime() => Time.timeScale = 0;
 
     private void SubscribeToEvents()
+    {
+
+    }
+
+    private void LoadSprites()
     {
 
     }

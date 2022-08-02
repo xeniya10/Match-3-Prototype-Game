@@ -1108,6 +1108,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1048643488}
+  - component: {fileID: 1048643490}
   - component: {fileID: 1048643489}
   m_Layer: 5
   m_Name: GameField
@@ -1144,9 +1145,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 1048643487}
   m_Enabled: 1
   m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8200a4e58ee9a143be251bbbab266d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1048643490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1048643487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7160163718a718246b36e6c07690a17f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  crystalPrefab: {fileID: 6564967306600369660, guid: 7db7f419ce6342147afb6ece55b8ac41, type: 3}
+  fieldManager: {fileID: 1048643489}
 --- !u!1 &1345015633
 GameObject:
   m_ObjectHideFlags: 0
@@ -1494,11 +1509,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad73e38b77989e444a5d20f4ad07d2d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  crystalController: {fileID: 1048643489}
+  crystalController: {fileID: 1048643490}
   topBar: {fileID: 1933421388}
   menuScreen: {fileID: 1514344520}
-  gameResultText: {fileID: 2123253878}
+  gameScreen: {fileID: 218322973}
   gameOverScreen: {fileID: 789225980}
+  gameResultText: {fileID: 2123253878}
 --- !u!1 &1603982148
 GameObject:
   m_ObjectHideFlags: 0
