@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+    [SerializeField] private CrystalSprites crystalSprites;
     [SerializeField] private CrystalController crystalController;
     [SerializeField] private TopBar topBar;
     [SerializeField] private GameObject menuScreen;
@@ -16,7 +17,6 @@ public class GameController : MonoBehaviour
 
     private void Awake()
     {
-        ImageLoader.LoadAll();
         crystalController.CreatePool();
         ShowMenuScreen();
     }
@@ -76,8 +76,8 @@ public class GameController : MonoBehaviour
         crystalsTarget = number;
         topBar.SetTargetNumber(crystalsTarget);
 
-        int imageNumber = ImageLoader.CrystalSprites.Length;
-        Sprite crystal = ImageLoader.CrystalSprites[Random.Range(0, imageNumber)];
+        int imageNumber = crystalSprites.Sprites.Count;
+        Sprite crystal = crystalSprites.Sprites[Random.Range(0, imageNumber)];
         topBar.SetTargetCrystal(crystal);
     }
 

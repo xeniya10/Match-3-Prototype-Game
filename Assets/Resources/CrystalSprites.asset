@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50af5545c3e1cd14a944b658d9160085, type: 3}
+  m_Name: CrystalSprites
+  m_EditorClassIdentifier: 
+  Sprites:
+  - {fileID: 21300000, guid: 0d0dea6a45f445143954afffb30d0c8c, type: 3}
+  - {fileID: 21300000, guid: b9907dc6e6102dc4b8256a8eef022808, type: 3}
+  - {fileID: 21300000, guid: 6a8dc82e2e073c14d9f83234284cff6c, type: 3}
+  - {fileID: 21300000, guid: b98c09dab2557fe4883beaf4cbd32e5c, type: 3}
+  - {fileID: 21300000, guid: 83a41fb48769b8543930b0c6193daff0, type: 3}
+  - {fileID: 21300000, guid: 6c19aa79481342b4c94e2630f0940f6c, type: 3}
+  - {fileID: 21300000, guid: e333bfecc130ea349a84c9a9445d9d5c, type: 3}
+  - {fileID: 21300000, guid: 986afe5aecc56944d97a72ca14a892cb, type: 3}
+  - {fileID: 21300000, guid: ea37d2a607f89e5428353da0390ab2ac, type: 3}

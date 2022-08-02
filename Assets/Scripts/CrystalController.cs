@@ -16,15 +16,20 @@ public class CrystalController : MonoBehaviour
 
     public void CreatePool()
     {
-        // totalCrystalNumber = _ballField.ColumnNumber * _ballField.RowNumber;
-        totalCrystalNumber = 20;
+        fieldManager.CalculateFieldOptions();
+        crystalPrefab.SetSize(fieldManager.CellSide);
 
-        for (int i = 0; i < totalCrystalNumber; i++)
+        for (int i = 0; i < fieldManager.ColumnNumber; i++)
         {
-            var crystal = crystalPrefab.Create(transform);
-            // crystal.BallBurstEvent += (burstBall) => MoveDownBallsAbove(burstBall);
-            crystal.CrystalClickEvent += () => MatchEvent?.Invoke(-1);
-            crystalPool.Add(crystal);
+            for (int j = 0; j < fieldManager.RowNumber; j++)
+            {
+                Crystal crystal = crystalPrefab.Create(transform);
+                float xPos = fieldManager.StartXPosition + (fieldManager.CellsOffset * i);
+                float yPos = fieldManager.StartYPosition + (fieldManager.CellsOffset * j);
+                crystal.transform.localPosition = new Vector2(xPos, yPos);
+                crystal.CrystalClickEvent += () => MatchEvent?.Invoke(-1);
+                crystalPool.Add(crystal);
+            }
         }
 
         searchMatchTimer = DateTime.Now;

@@ -7,6 +7,8 @@ using DG.Tweening;
 
 public class Crystal : MonoBehaviour
 {
+    [SerializeField] private RectTransform crystalRectTransform;
+    [SerializeField] private CrystalSprites crystalSprites;
     [SerializeField] private Image crystalImage;
     [SerializeField] private Image borderImage;
     [SerializeField] private Image sparkleImage;
@@ -18,15 +20,21 @@ public class Crystal : MonoBehaviour
     {
         sparkleImage.gameObject.SetActive(false);
         borderImage.gameObject.SetActive(false);
-        var ball = Instantiate(this, parent);
-        ball.SetRandomType();
-        return ball;
+
+        var crystal = Instantiate(this, parent);
+        crystal.SetRandomType();
+        return crystal;
+    }
+
+    public void SetSize(float size)
+    {
+        crystalRectTransform.sizeDelta = new Vector2(size, size);
     }
 
     public void SetRandomType()
     {
-        CrystalType = Random.Range(0, ImageLoader.CrystalSprites.Length);
-        crystalImage.sprite = ImageLoader.CrystalSprites[CrystalType];
+        CrystalType = Random.Range(0, crystalSprites.Sprites.Count);
+        crystalImage.sprite = crystalSprites.Sprites[CrystalType];
     }
 
     public void CheckNeighbor(List<Crystal> list, Vector2 direction)
@@ -54,6 +62,7 @@ public class Crystal : MonoBehaviour
         Sequence sequence = DOTween.Sequence();
         var appearingSparkle = sparkleImage.DOFade(1, animationTime);
         var disappearingSparkle = sparkleImage.DOFade(0, animationTime);
+
         sequence.Append(appearingSparkle).Append(disappearingSparkle);
         sequence.OnComplete(() => { sparkleImage.gameObject.SetActive(false); });
     }

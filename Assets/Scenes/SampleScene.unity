@@ -1148,6 +1148,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8200a4e58ee9a143be251bbbab266d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ColumnNumber: 5
+  RowNumber: 9
+  Padding: 100
+  Spacing: 25
+  CellSide: 0
+  CellsOffset: 0
+  StartXPosition: 0
+  StartYPosition: 0
 --- !u!114 &1048643490
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1509,6 +1517,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad73e38b77989e444a5d20f4ad07d2d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  crystalSprites: {fileID: 11400000, guid: d6cb19ae8cc2a2845b9af7a3e9ac0756, type: 2}
   crystalController: {fileID: 1048643490}
   topBar: {fileID: 1933421388}
   menuScreen: {fileID: 1514344520}
