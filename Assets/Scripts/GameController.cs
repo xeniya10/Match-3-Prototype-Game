@@ -1,38 +1,39 @@
-using TMPro;
 using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    [SerializeField] private CrystalSprites crystalSprites;
     [SerializeField] private CrystalController crystalController;
-    [SerializeField] private TopBar topBar;
-    [SerializeField] private GameObject menuScreen;
-    [SerializeField] private GameObject gameScreen;
-    [SerializeField] private GameObject gameOverScreen;
-    [SerializeField] private TextMeshProUGUI gameResultText;
-    private string winResult = "WIN";
-    private string loseResult = "Game Over";
-    private int moves = 0;
-    private int crystalsTarget = 0;
+    [SerializeField] private ScreenManager screenManager;
+    [SerializeField] private CrystalSprites crystalSprites;
+    private int currentMoves = 0;
+    private int currentTarget = 0;
+    private int TargetCrystalType = 0;
+
+    [Header("Game start options")]
+    public int StartMoves = 30;
+    public int StartTarget = 20;
 
     private void Awake()
     {
+        SubscribeToEvents();
         crystalController.CreatePool();
-        ShowMenuScreen();
+        screenManager.OpenMenuScreen();
     }
 
     public void StartGame()
     {
-        SetMoves(30);
-        SetGameTarget(Random.Range(20, 41));
-        ShowGameScreen();
+        ResetGameTarget();
+        ResetMoves();
+        RunTime();
+        crystalController.ResetField();
+        crystalController.FindMatch();
     }
 
     private void CheckGameOver()
     {
-        if (crystalsTarget == 0 || moves == 0)
+        if (currentTarget == 0 || currentMoves == 0)
         {
-            ShowGameOverScreen();
+            screenManager.OpenGameOver(currentTarget, currentMoves);
         }
     }
 
@@ -42,56 +43,33 @@ public class GameController : MonoBehaviour
         Application.Quit();
     }
 
-    public void ShowMenuScreen()
+    private void ResetMoves()
     {
-        RunTime();
-        gameScreen.SetActive(false);
-        menuScreen.SetActive(true);
-        gameOverScreen.SetActive(false);
+        currentMoves = StartMoves;
+        screenManager.SetMovesNumber(currentMoves);
     }
 
-    private void ShowGameScreen()
+    private void UpdateMoves()
     {
-        PauseTime();
-        gameScreen.SetActive(true);
-        menuScreen.SetActive(false);
-        gameOverScreen.SetActive(false);
+        currentMoves = currentMoves - 1;
+        screenManager.SetMovesNumber(currentMoves);
     }
 
-    private void ShowGameOverScreen()
+    private void ResetGameTarget()
     {
-        PauseTime();
-        SetGameResult();
-        gameOverScreen.SetActive(true);
+        currentTarget = StartTarget;
+        screenManager.SetTargetNumber(currentTarget);
+
+        TargetCrystalType = Random.Range(0, crystalSprites.Sprites.Count);
+        screenManager.SetTargetSprite(TargetCrystalType);
     }
 
-    private void SetMoves(int number)
+    private void UpdateTargetNumber(int crystalType, int crystalNumber)
     {
-        moves = number;
-        topBar.SetMovesNumber(moves);
-    }
-
-    private void SetGameTarget(int number)
-    {
-        crystalsTarget = number;
-        topBar.SetTargetNumber(crystalsTarget);
-
-        int imageNumber = crystalSprites.Sprites.Count;
-        Sprite crystal = crystalSprites.Sprites[Random.Range(0, imageNumber)];
-        topBar.SetTargetCrystal(crystal);
-    }
-
-    private void SetGameResult()
-    {
-        if (crystalsTarget == 0)
+        if (crystalType == TargetCrystalType)
         {
-            gameResultText.text = winResult;
-            return;
-        }
-
-        if (moves == 0)
-        {
-            gameResultText.text = loseResult;
+            currentTarget = currentTarget - crystalNumber;
+            screenManager.SetTargetNumber(currentTarget);
         }
     }
 
@@ -101,11 +79,12 @@ public class GameController : MonoBehaviour
 
     private void SubscribeToEvents()
     {
+        screenManager.OpenGameScreenEvent += StartGame;
+        screenManager.OpenMenuScreenEvent += PauseTime;
+        screenManager.OpenGameOverScreenEvent += PauseTime;
+        screenManager.ClickExitButtonEvent += ExitGame;
 
-    }
-
-    private void LoadSprites()
-    {
-
+        crystalController.MoveMadeEvent += UpdateMoves;
+        crystalController.ClearMatchEvent += (crystalType, crystalNumber) => UpdateTargetNumber(crystalType, crystalNumber);
     }
 }

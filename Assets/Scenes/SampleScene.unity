@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 137817605}
   - component: {fileID: 137817604}
   m_Layer: 5
-  m_Name: TargetNumber
+  m_Name: TargetText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -697,7 +697,7 @@ GameObject:
   - component: {fileID: 576518734}
   - component: {fileID: 576518733}
   m_Layer: 5
-  m_Name: TargetCrystal
+  m_Name: TargetImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1049,9 +1049,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1564392640}
-        m_TargetAssemblyTypeName: GameController, Assembly-CSharp
-        m_MethodName: StartGame
+      - m_Target: {fileID: 1652867449}
+        m_TargetAssemblyTypeName: ScreenManager, Assembly-CSharp
+        m_MethodName: OpenGameScreen
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1111,7 +1111,7 @@ GameObject:
   - component: {fileID: 1048643490}
   - component: {fileID: 1048643489}
   m_Layer: 5
-  m_Name: GameField
+  m_Name: GameBoard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1145,17 +1145,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1048643487}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8200a4e58ee9a143be251bbbab266d5, type: 3}
+  m_Script: {fileID: 11500000, guid: 31844af4f082980458e15486e0950c87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ColumnNumber: 5
-  RowNumber: 9
+  RowNumber: 8
   Padding: 100
-  Spacing: 25
-  CellSide: 0
-  CellsOffset: 0
-  StartXPosition: 0
-  StartYPosition: 0
+  Spacing: 20
+  CellSize: 0
+  CellOffset: 0
+  StartPosition: {x: 0, y: 0}
 --- !u!114 &1048643490
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1169,7 +1168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   crystalPrefab: {fileID: 6564967306600369660, guid: 7db7f419ce6342147afb6ece55b8ac41, type: 3}
-  fieldManager: {fileID: 1048643489}
+  gridManager: {fileID: 1048643489}
 --- !u!1 &1345015633
 GameObject:
   m_ObjectHideFlags: 0
@@ -1472,7 +1471,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1564392638
 GameObject:
@@ -1517,13 +1516,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad73e38b77989e444a5d20f4ad07d2d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  crystalSprites: {fileID: 11400000, guid: d6cb19ae8cc2a2845b9af7a3e9ac0756, type: 2}
   crystalController: {fileID: 1048643490}
-  topBar: {fileID: 1933421388}
-  menuScreen: {fileID: 1514344520}
-  gameScreen: {fileID: 218322973}
-  gameOverScreen: {fileID: 789225980}
-  gameResultText: {fileID: 2123253878}
+  screenManager: {fileID: 1652867449}
+  crystalSprites: {fileID: 11400000, guid: d6cb19ae8cc2a2845b9af7a3e9ac0756, type: 2}
+  StartMoves: 30
+  StartTarget: 20
 --- !u!1 &1603982148
 GameObject:
   m_ObjectHideFlags: 0
@@ -1606,9 +1603,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1564392640}
-        m_TargetAssemblyTypeName: GameController, Assembly-CSharp
-        m_MethodName: ShowMenuScreen
+      - m_Target: {fileID: 1652867449}
+        m_TargetAssemblyTypeName: ScreenManager, Assembly-CSharp
+        m_MethodName: OpenMenuScreen
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1720,6 +1717,59 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1 &1652867448
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1652867450}
+  - component: {fileID: 1652867449}
+  m_Layer: 0
+  m_Name: '[ScreenManager]'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1652867449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1652867448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52ec8dbe7ce48ed4481acf7f0c1e1f2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  menuScreen: {fileID: 1514344520}
+  gameScreen: {fileID: 218322973}
+  gameOverScreen: {fileID: 789225980}
+  movesText: {fileID: 2020691639}
+  targetText: {fileID: 137817604}
+  targetCrystalImage: {fileID: 576518733}
+  gameResultText: {fileID: 2123253878}
+  crystalSprites: {fileID: 11400000, guid: d6cb19ae8cc2a2845b9af7a3e9ac0756, type: 2}
+  winText: WIN
+  loseText: Game Over
+--- !u!4 &1652867450
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1652867448}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1765880700
 GameObject:
   m_ObjectHideFlags: 0
@@ -1803,8 +1853,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1564392640}
-        m_TargetAssemblyTypeName: GameController, Assembly-CSharp
+      - m_Target: {fileID: 1652867449}
+        m_TargetAssemblyTypeName: ScreenManager, Assembly-CSharp
         m_MethodName: ExitGame
         m_Mode: 1
         m_Arguments:
@@ -1936,9 +1986,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1564392640}
-        m_TargetAssemblyTypeName: GameController, Assembly-CSharp
-        m_MethodName: ShowMenuScreen
+      - m_Target: {fileID: 1652867449}
+        m_TargetAssemblyTypeName: ScreenManager, Assembly-CSharp
+        m_MethodName: OpenMenuScreen
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1996,7 +2046,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1933421386}
   - component: {fileID: 1933421387}
-  - component: {fileID: 1933421388}
   m_Layer: 5
   m_Name: TopBar
   m_TagString: Untagged
@@ -2052,21 +2101,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!114 &1933421388
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1933421385}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 108597f0acac0664d87d2d4273d64058, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  movesText: {fileID: 2020691639}
-  targetText: {fileID: 137817604}
-  targetCrystalImage: {fileID: 576518733}
 --- !u!1 &2020691637
 GameObject:
   m_ObjectHideFlags: 0

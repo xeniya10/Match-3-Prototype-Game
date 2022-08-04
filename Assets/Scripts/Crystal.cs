@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 using DG.Tweening;
+using System.Collections;
 
 public class Crystal : MonoBehaviour
 {
@@ -12,9 +13,12 @@ public class Crystal : MonoBehaviour
     [SerializeField] private Image crystalImage;
     [SerializeField] private Image borderImage;
     [SerializeField] private Image sparkleImage;
-    private float animationTime = 0.1f;
+
+    [Space]
     public int CrystalType = 0;
-    public event Action CrystalClickEvent;
+    [SerializeField] private float fadeTime = 0.1f;
+    public event Action<Crystal> ClickEvent;
+    public event Action<Crystal> DisappearEvent;
 
     public Crystal Create(Transform parent)
     {
@@ -26,15 +30,20 @@ public class Crystal : MonoBehaviour
         return crystal;
     }
 
+    public void SetRandomType()
+    {
+        CrystalType = Random.Range(0, crystalSprites.Sprites.Count);
+        crystalImage.sprite = crystalSprites.Sprites[CrystalType];
+    }
+
     public void SetSize(float size)
     {
         crystalRectTransform.sizeDelta = new Vector2(size, size);
     }
 
-    public void SetRandomType()
+    public void SetPosition(float x, float y)
     {
-        CrystalType = Random.Range(0, crystalSprites.Sprites.Count);
-        crystalImage.sprite = crystalSprites.Sprites[CrystalType];
+        transform.localPosition = new Vector2(x, y);
     }
 
     public void CheckNeighbor(List<Crystal> list, Vector2 direction)
@@ -49,33 +58,59 @@ public class Crystal : MonoBehaviour
         else list.Add(this);
     }
 
-    private void Disappear()
+    public void Disappear()
     {
         borderImage.gameObject.SetActive(false);
-        var disappearingCrystal = crystalImage.DOFade(0, animationTime);
-        disappearingCrystal.OnComplete(() => { this.Sparkle(); });
+        var disappearingCrystal = crystalImage.DOFade(0, fadeTime);
+        disappearingCrystal.OnComplete(() =>
+        {
+            this.Sparkle(() =>
+            {
+                sparkleImage.gameObject.SetActive(false);
+                gameObject.SetActive(false);
+                DisappearEvent?.Invoke(this);
+            });
+        });
     }
 
-    private void Sparkle()
+    private void Sparkle(Action CallBack)
     {
         sparkleImage.gameObject.SetActive(true);
         Sequence sequence = DOTween.Sequence();
-        var appearingSparkle = sparkleImage.DOFade(1, animationTime);
-        var disappearingSparkle = sparkleImage.DOFade(0, animationTime);
+        var appearingSparkle = sparkleImage.DOFade(1, fadeTime);
+        var disappearingSparkle = sparkleImage.DOFade(0, fadeTime);
 
         sequence.Append(appearingSparkle).Append(disappearingSparkle);
-        sequence.OnComplete(() => { sparkleImage.gameObject.SetActive(false); });
+        sequence.OnComplete(() => CallBack?.Invoke());
     }
 
-    public void ShowUp()
+    public IEnumerator MoveToPosition(Vector3 position)
+    {
+        var move = transform.DOLocalMove(position, fadeTime);
+        yield return move.WaitForCompletion();
+    }
+
+    public void ShowUp(Action CallBack)
     {
         SetRandomType();
-        crystalImage.DOFade(1, animationTime);
+        gameObject.SetActive(true);
+        var appearingCrystal = crystalImage.DOFade(1, fadeTime);
+        appearingCrystal.OnComplete(() => CallBack?.Invoke());
     }
 
-    public void Click()
+    private void Select()
     {
         borderImage.gameObject.SetActive(true);
-        CrystalClickEvent?.Invoke();
+    }
+
+    public void Deselect()
+    {
+        borderImage.gameObject.SetActive(false);
+    }
+
+    public void OnClick()
+    {
+        Select();
+        ClickEvent?.Invoke(this);
     }
 }
