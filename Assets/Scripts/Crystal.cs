@@ -62,26 +62,22 @@ public class Crystal : MonoBehaviour
     {
         borderImage.gameObject.SetActive(false);
         var disappearingCrystal = crystalImage.DOFade(0, fadeTime);
-        disappearingCrystal.OnComplete(() =>
-        {
-            this.Sparkle(() =>
-            {
-                sparkleImage.gameObject.SetActive(false);
-                gameObject.SetActive(false);
-                DisappearEvent?.Invoke(this);
-            });
-        });
+        disappearingCrystal.OnComplete(() => this.Sparkle());
     }
 
-    private void Sparkle(Action CallBack)
+    private void Sparkle()
     {
         sparkleImage.gameObject.SetActive(true);
-        Sequence sequence = DOTween.Sequence();
-        var appearingSparkle = sparkleImage.DOFade(1, fadeTime);
-        var disappearingSparkle = sparkleImage.DOFade(0, fadeTime);
 
-        sequence.Append(appearingSparkle).Append(disappearingSparkle);
-        sequence.OnComplete(() => CallBack?.Invoke());
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(sparkleImage.DOFade(1, fadeTime)).
+        Append(sparkleImage.DOFade(0, fadeTime)).
+        OnComplete(() =>
+        {
+            sparkleImage.gameObject.SetActive(false);
+            gameObject.SetActive(false);
+            DisappearEvent?.Invoke(this);
+        });
     }
 
     public IEnumerator MoveToPosition(Vector3 position)

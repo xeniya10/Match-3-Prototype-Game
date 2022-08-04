@@ -109,7 +109,7 @@ public class CrystalController : MonoBehaviour
 
         for (int i = 0; i < crystalPool.Count; i++)
         {
-            for (int j = 0; j < hitDirections.Length; j++)
+            for (int j = 1; j < hitDirections.Length - 1; j++)
             {
                 RaycastHit2D hit = Physics2D.Raycast(crystalPool[i].transform.position, hitDirections[j]);
 

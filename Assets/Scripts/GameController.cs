@@ -31,7 +31,7 @@ public class GameController : MonoBehaviour
 
     private void CheckGameOver()
     {
-        if (currentTarget == 0 || currentMoves == 0)
+        if (currentTarget < 1 || currentMoves < 1)
         {
             screenManager.OpenGameOver(currentTarget, currentMoves);
         }
@@ -53,6 +53,11 @@ public class GameController : MonoBehaviour
     {
         currentMoves = currentMoves - 1;
         screenManager.SetMovesNumber(currentMoves);
+
+        if (currentMoves == 0)
+        {
+            screenManager.OpenGameOver(currentTarget, currentMoves);
+        }
     }
 
     private void ResetGameTarget()
@@ -69,6 +74,13 @@ public class GameController : MonoBehaviour
         if (crystalType == TargetCrystalType)
         {
             currentTarget = currentTarget - crystalNumber;
+
+            if (currentTarget < 1)
+            {
+                currentTarget = 0;
+                screenManager.OpenGameOver(currentTarget, currentMoves);
+            }
+
             screenManager.SetTargetNumber(currentTarget);
         }
     }

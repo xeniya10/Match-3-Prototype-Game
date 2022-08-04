@@ -67,13 +67,13 @@ public class ScreenManager : MonoBehaviour
 
     private void SetGameResult(int crystalsTarget, int moves)
     {
-        if (crystalsTarget == 0)
+        if (crystalsTarget < 1)
         {
             gameResultText.text = winText;
             return;
         }
 
-        if (moves == 0)
+        if (moves < 1)
         {
             gameResultText.text = loseText;
         }
