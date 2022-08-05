@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: CrystalSprites
   m_EditorClassIdentifier: 
   sprites:
-  - {fileID: 21300000, guid: ea37d2a607f89e5428353da0390ab2ac, type: 3}
-  - {fileID: 21300000, guid: 83a41fb48769b8543930b0c6193daff0, type: 3}
-  - {fileID: 21300000, guid: b98c09dab2557fe4883beaf4cbd32e5c, type: 3}
-  - {fileID: 21300000, guid: 0d0dea6a45f445143954afffb30d0c8c, type: 3}
-  - {fileID: 21300000, guid: 6a8dc82e2e073c14d9f83234284cff6c, type: 3}
-  - {fileID: 21300000, guid: e333bfecc130ea349a84c9a9445d9d5c, type: 3}
-  - {fileID: 21300000, guid: 986afe5aecc56944d97a72ca14a892cb, type: 3}
-  - {fileID: 21300000, guid: 6c19aa79481342b4c94e2630f0940f6c, type: 3}
-  - {fileID: 21300000, guid: b9907dc6e6102dc4b8256a8eef022808, type: 3}
+  - {fileID: 21300000, guid: bfffbe674a1235148beb9024f0abbcfa, type: 3}
+  - {fileID: 21300000, guid: 408571dd9a9f42647847b2b88c9ce469, type: 3}
+  - {fileID: 21300000, guid: 6763c8c3e3406a64992b46c8a4a31aa0, type: 3}
+  - {fileID: 21300000, guid: 630ce3c700b529e489ef10d00567f5f9, type: 3}
+  - {fileID: 21300000, guid: 7c14e74856c8424418cb04caa0c56b74, type: 3}
+  - {fileID: 21300000, guid: 68f80290abda5444b8b01dadeb5f89e8, type: 3}
+  - {fileID: 21300000, guid: d685f0cb32d7dc64b8b465515f985e04, type: 3}
+  - {fileID: 21300000, guid: 3017247a052a51a4d9f4d370423a1970, type: 3}
+  - {fileID: 21300000, guid: 75f793dc732b2814a984f6c671dad3ad, type: 3}

@@ -1,70 +1,75 @@
 using UnityEngine;
 
-public class GameController : MonoBehaviour
+namespace Match3Prototype
 {
-    [SerializeField] private CrystalController crystalController;
-    [SerializeField] private ScreenManager screenManager;
-    [SerializeField] private CrystalSprites crystalSprites;
-    private int currentMovesNumber = 0;
-    private int currentTargetCrystalsNumber = 0;
-
-    [Header("Game start options")]
-    public int startMovesNumber = 30;
-    public int startTargetCrystalsNumber = 20;
-    [SerializeField] private CrystalColor targetCrystalColor = 0;
-
-    private void Awake()
+    public class GameController : MonoBehaviour
     {
-        SubscribeToEvents();
-        crystalController.CreatePool();
-        screenManager.OpenMenuScreen();
-    }
+        [SerializeField] private CrystalController crystalController;
+        [SerializeField] private ScreenManager screenManager;
+        [SerializeField] private CrystalSprites crystalSprites;
+        private int currentMovesNumber = 0;
+        private int currentTargetCrystalsNumber = 0;
 
-    public void StartGame()
-    {
-        ResetGameTarget();
-        ResetMoves();
-        RunTime();
-        crystalController.ResetField();
-    }
+        [Header("Game start options")]
+        public int startMovesNumber = 30;
+        public int startTargetCrystalsNumber = 20;
+        [SerializeField] private CrystalColor targetCrystalColor = 0;
 
-    public void ExitGame()
-    {
-        UnityEditor.EditorApplication.isPlaying = false;
-        Application.Quit();
-    }
-
-    private void ResetMoves()
-    {
-        currentMovesNumber = startMovesNumber;
-        screenManager.SetMovesNumber(currentMovesNumber);
-    }
-
-    private void UpdateMoves()
-    {
-        currentMovesNumber = currentMovesNumber - 1;
-        screenManager.SetMovesNumber(currentMovesNumber);
-
-        if (currentMovesNumber == 0)
+        private void Awake()
         {
-            screenManager.OpenGameOverScreen(currentTargetCrystalsNumber, currentMovesNumber);
+            SubscribeToEvents();
+            crystalController.CreatePool();
+            screenManager.OpenMenuScreen();
         }
-    }
 
-    private void ResetGameTarget()
-    {
-        currentTargetCrystalsNumber = startTargetCrystalsNumber;
-        screenManager.SetTargetNumber(currentTargetCrystalsNumber);
-
-        int randomNumber = Random.Range(0, crystalSprites.sprites.Count);
-        targetCrystalColor = (CrystalColor)randomNumber;
-        screenManager.SetTargetSprite(randomNumber);
-    }
-
-    private void UpdateTargetNumber(CrystalColor crystalColor, int crystalNumber)
-    {
-        if (crystalColor == targetCrystalColor)
+        public void StartGame()
         {
+            ResetGameTarget();
+            ResetMoves();
+            RunTime();
+            crystalController.ResetField();
+        }
+
+        public void ExitGame()
+        {
+            UnityEditor.EditorApplication.isPlaying = false;
+            Application.Quit();
+        }
+
+        private void ResetMoves()
+        {
+            currentMovesNumber = startMovesNumber;
+            screenManager.SetMovesNumber(currentMovesNumber);
+        }
+
+        private void UpdateMoves()
+        {
+            currentMovesNumber = currentMovesNumber - 1;
+            screenManager.SetMovesNumber(currentMovesNumber);
+
+            if (currentMovesNumber == 0)
+            {
+                screenManager.OpenGameOverScreen(currentTargetCrystalsNumber, currentMovesNumber);
+            }
+        }
+
+        private void ResetGameTarget()
+        {
+            currentTargetCrystalsNumber = startTargetCrystalsNumber;
+            screenManager.SetTargetNumber(currentTargetCrystalsNumber);
+
+            int randomNumber = Random.Range(0, crystalSprites.sprites.Count);
+            targetCrystalColor = (CrystalColor)randomNumber;
+            screenManager.SetTargetSprite(randomNumber);
+        }
+
+        private void UpdateTargetNumber(CrystalColor crystalColor, int crystalNumber)
+        {
+            if (crystalColor != targetCrystalColor)
+            {
+                return;
+            }
+
             currentTargetCrystalsNumber = currentTargetCrystalsNumber - crystalNumber;
 
             if (currentTargetCrystalsNumber < 1)
@@ -75,20 +80,20 @@ public class GameController : MonoBehaviour
 
             screenManager.SetTargetNumber(currentTargetCrystalsNumber);
         }
-    }
 
-    private void RunTime() => Time.timeScale = 1;
+        private void RunTime() => Time.timeScale = 1;
 
-    private void PauseTime() => Time.timeScale = 0;
+        private void PauseTime() => Time.timeScale = 0;
 
-    private void SubscribeToEvents()
-    {
-        screenManager.openGameScreenEvent += StartGame;
-        screenManager.openMenuScreenEvent += PauseTime;
-        screenManager.openGameOverScreenEvent += PauseTime;
-        screenManager.clickExitButtonEvent += ExitGame;
+        private void SubscribeToEvents()
+        {
+            screenManager.openGameScreenEvent += StartGame;
+            screenManager.openMenuScreenEvent += PauseTime;
+            screenManager.openGameOverScreenEvent += PauseTime;
+            screenManager.clickExitButtonEvent += ExitGame;
 
-        crystalController.swapEvent += UpdateMoves;
-        crystalController.matchedCrystalsClearedEvent += (crystalColor, crystalNumber) => UpdateTargetNumber(crystalColor, crystalNumber);
+            crystalController.swapEvent += UpdateMoves;
+            crystalController.matchedCrystalsClearedEvent += UpdateTargetNumber;
+        }
     }
 }
