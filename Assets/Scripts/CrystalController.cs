@@ -9,227 +9,228 @@ public class CrystalController : MonoBehaviour
 {
     [SerializeField] private Crystal crystalPrefab;
     [SerializeField] private GridManager gridManager;
-    private Vector2[] hitDirections = { Vector2.up, Vector2.down, Vector2.left, Vector2.right };
-    private List<Crystal> crystalPool = new List<Crystal>();
-    private List<Crystal> selectedCrystals = new List<Crystal>();
-    public event Action<int, int> ClearMatchEvent;
-    public event Action MoveMadeEvent;
+    private Vector2[] raycastDirections = { Vector2.up, Vector2.down, Vector2.left, Vector2.right };
+    private List<Crystal> crystalsPool = null;
+    private List<Crystal> clickedCrystals = null;
+
+    /// <summary>Called, when matched crystals were cleared, and give color and number of cleared crystals.</summary>
+    public event Action<CrystalColor, int> matchedCrystalsClearedEvent;
+    public event Action swapEvent;
 
     public void CreatePool()
     {
-        gridManager.CalculateFieldParameters();
-        crystalPrefab.SetSize(gridManager.CellSize);
+        gridManager.CalculateGridParameters();
+        crystalPrefab.SetSize(gridManager.cellSize);
 
-        for (int i = 0; i < gridManager.ColumnNumber; i++)
+        crystalsPool = new List<Crystal>();
+
+        for (int i = 0; i < gridManager.columnNumber; i++)
         {
-            for (int j = 0; j < gridManager.RowNumber; j++)
+            for (int j = 0; j < gridManager.rowNumber; j++)
             {
                 Crystal crystal = crystalPrefab.Create(transform);
-                crystalPool.Add(crystal);
+                crystalsPool.Add(crystal);
 
-                float x = gridManager.StartPosition.x + (gridManager.CellOffset * i);
-                float y = gridManager.StartPosition.y + (gridManager.CellOffset * j);
+                float x = gridManager.startCellPosition.x + (gridManager.cellOffset * i);
+                float y = gridManager.startCellPosition.y + (gridManager.cellOffset * j);
                 crystal.SetPosition(x, y);
 
-                crystal.ClickEvent += (selectedCrystal) => Swap(selectedCrystal);
-                crystal.DisappearEvent += (clearedCrystal) => ShiftDown(clearedCrystal);
+                crystal.clickEvent += (clickedCrystal) => Swap(clickedCrystal);
             }
         }
     }
 
-    public void ResetField()
+    private void Swap(Crystal clickedCrystal)
     {
-        for (int i = 0; i < crystalPool.Count; i++)
+        if (clickedCrystals == null)
         {
-            crystalPool[i].SetRandomType();
+            clickedCrystals = new List<Crystal>();
         }
-    }
 
-    private void Swap(Crystal selectedCrystal)
-    {
-        selectedCrystals.Add(selectedCrystal);
+        clickedCrystals.Add(clickedCrystal);
 
-        if (selectedCrystals.Count < 2)
+        if (clickedCrystals.Count < 2)
         {
             return;
         }
 
-        var startPos1 = selectedCrystals[0].transform.localPosition;
-        var startPos2 = selectedCrystals[1].transform.localPosition;
+        Vector2 startPosition1 = clickedCrystals[0].transform.localPosition;
+        Vector2 startPosition2 = clickedCrystals[1].transform.localPosition;
 
-        for (int i = 0; i < hitDirections.Length; i++)
+        // Check by raycast clicked crystals are neighbors or not
+        for (int i = 0; i < raycastDirections.Length; i++)
         {
-            RaycastHit2D hit = Physics2D.Raycast(selectedCrystal.transform.position, hitDirections[i]);
+            RaycastHit2D hit = Physics2D.Raycast(clickedCrystal.transform.position, raycastDirections[i]);
 
-            if (hit.collider != null && selectedCrystals.Contains(hit.collider.GetComponent<Crystal>()))
+            if (hit.collider != null && clickedCrystals.Contains(hit.collider.GetComponent<Crystal>()))
             {
-                StartCoroutine(SwapAnimation(startPos1, startPos2));
+                StartCoroutine(SwapAnimation(startPosition1, startPosition2));
                 return;
             }
         }
 
-        ClearSelectedCrystals();
+        foreach (Crystal crystal in clickedCrystals)
+        {
+            crystal.SetBorderActive(false);
+        }
+
+        clickedCrystals.Clear();
     }
 
     private IEnumerator SwapAnimation(Vector3 startPos1, Vector3 startPos2)
     {
-        var swap1 = selectedCrystals[0].transform.DOLocalMove(startPos2, 0.2f);
-        var swap2 = selectedCrystals[1].transform.DOLocalMove(startPos1, 0.2f);
-        yield return swap2.WaitForCompletion();
+        var swapAnimation1 = clickedCrystals[0].transform.DOLocalMove(startPos2, 0.2f);
+        var swapAnimation2 = clickedCrystals[1].transform.DOLocalMove(startPos1, 0.2f);
 
+        yield return swapAnimation2.WaitForCompletion();
+
+        // If after swaping doesn't find matching cristals, start reverse swap animation
         if (!FindMatch())
         {
-            var undoSwap1 = selectedCrystals[0].transform.DOLocalMove(startPos1, 0.2f);
-            var undoSwap2 = selectedCrystals[1].transform.DOLocalMove(startPos2, 0.2f);
-            yield return undoSwap2.WaitForCompletion();
+            var undoSwapAnimation1 = clickedCrystals[0].transform.DOLocalMove(startPos1, 0.2f);
+            var undoSwapAnimation2 = clickedCrystals[1].transform.DOLocalMove(startPos2, 0.2f);
+
+            yield return undoSwapAnimation2.WaitForCompletion();
         }
 
+        // Else move was made
         else
         {
-            MoveMadeEvent?.Invoke();
+            swapEvent?.Invoke();
         }
 
-        ClearSelectedCrystals();
-    }
-
-    private void ClearSelectedCrystals()
-    {
-        foreach (var crystal in selectedCrystals)
+        foreach (Crystal crystal in clickedCrystals)
         {
-            crystal.Deselect();
+            crystal.SetBorderActive(false);
         }
 
-        selectedCrystals.Clear();
+        clickedCrystals.Clear();
     }
 
+    /// <summary>Looking for neighbor cristals with the same color by raycasts in two directions (down, left).</summary>
     public bool FindMatch()
     {
-        List<Crystal> matchingBalls = new List<Crystal>();
-        bool IsMatched = false;
+        bool isMatchedFound = false;
+        List<Crystal> matchingCrystals = new List<Crystal>();
 
-        for (int i = 0; i < crystalPool.Count; i++)
+        for (int i = 0; i < crystalsPool.Count; i++)
         {
-            for (int j = 1; j < hitDirections.Length - 1; j++)
+            for (int j = 1; j < raycastDirections.Length - 1; j++)
             {
-                RaycastHit2D hit = Physics2D.Raycast(crystalPool[i].transform.position, hitDirections[j]);
+                RaycastHit2D raycastHit = Physics2D.Raycast(crystalsPool[i].transform.position, raycastDirections[j]);
 
-                if (hit.collider?.GetComponent<Crystal>().CrystalType == crystalPool[i].CrystalType)
+                if (raycastHit.collider?.GetComponent<Crystal>().CrystalColor == crystalsPool[i].CrystalColor)
                 {
-                    hit.collider.GetComponent<Crystal>().CheckNeighbor(matchingBalls, hitDirections[j]);
-                    matchingBalls.Add(crystalPool[i]);
+                    raycastHit.collider.GetComponent<Crystal>().CheckNeighbor(matchingCrystals, raycastDirections[j]);
+                    matchingCrystals.Add(crystalsPool[i]);
                 }
 
-                if (matchingBalls.Count > 2)
+                if (matchingCrystals.Count > 2)
                 {
-                    matchingBalls = matchingBalls.OrderByDescending(ball => ball.transform.position.y).ToList();
+                    // Sorting to start clearing with the highest matched crystal
+                    matchingCrystals = matchingCrystals.OrderByDescending(crystal => crystal.transform.position.y).ToList();
 
-                    foreach (var matchingBall in matchingBalls)
+                    foreach (Crystal matchingCrystal in matchingCrystals)
                     {
-                        matchingBall.Disappear();
+                        matchingCrystal.Clear((clearedCrystal) => Shift(clearedCrystal));
                     }
 
-                    ClearMatchEvent?.Invoke(matchingBalls[0].CrystalType, matchingBalls.Count);
-                    IsMatched = true;
+                    matchedCrystalsClearedEvent?.Invoke(matchingCrystals[0].CrystalColor, matchingCrystals.Count);
+                    isMatchedFound = true;
                 }
-                matchingBalls.Clear();
+                matchingCrystals.Clear();
             }
         }
 
-        return IsMatched;
+        return isMatchedFound;
     }
 
-    public void ShiftDown(Crystal clearedCrystal)
+    /// <summary>First of all, looking for all uncleared crystal located above cleared crystal, then shifted down all of them and shifted up cleared crystal</summary>
+    public void Shift(Crystal clearedCrystal)
     {
         List<Crystal> crystalsAbove = FindCrystalsAbove(clearedCrystal);
 
         if (crystalsAbove.Count == 0)
         {
-            clearedCrystal.ShowUp(() =>
-            {
-                if (!FindMatch())
-                {
-                    CheckPossibleMove();
-                }
-            });
+            clearedCrystal.Refill(() => CheckPossibleMove());
             return;
         }
 
-        crystalsAbove = crystalsAbove.OrderBy(ball => ball.transform.position.y).ToList();
+        // Sorting to start shifting with the lowest crystal
+        crystalsAbove = crystalsAbove.OrderBy(crystal => crystal.transform.position.y).ToList();
 
-        foreach (var crystal in crystalsAbove)
+        foreach (Crystal crystal in crystalsAbove)
         {
-            float shiftedYPosition = gridManager.CalculateShiftedYPosition(crystal, -1);
-            crystal.SetPosition(crystal.transform.localPosition.x, shiftedYPosition);
+            // Shift down one position
+            float verticalShiftDown = crystal.transform.localPosition.y - gridManager.cellOffset;
+            crystal.SetPosition(crystal.transform.localPosition.x, verticalShiftDown);
         }
 
-        Crystal topColumnCrystal = crystalsAbove[crystalsAbove.Count - 1];
-        ShiftUp(clearedCrystal, topColumnCrystal);
+        // Shift up one position from the highest crystal above
+        Crystal topCrystal = crystalsAbove[crystalsAbove.Count - 1];
+        float verticalShiftUp = topCrystal.transform.localPosition.y + gridManager.cellOffset;
+
+        clearedCrystal.SetPosition(clearedCrystal.transform.localPosition.x, verticalShiftUp);
+        clearedCrystal.Refill(() => CheckPossibleMove());
     }
 
     private List<Crystal> FindCrystalsAbove(Crystal clearedCrystal)
     {
         List<Crystal> crystalsAbove = new List<Crystal>();
 
-        for (int i = 0; i < crystalPool.Count; i++)
+        for (int i = 0; i < crystalsPool.Count; i++)
         {
-            Vector2 crystalPos = crystalPool[i].transform.localPosition;
+            Vector2 crystalPos = crystalsPool[i].transform.localPosition;
             Vector2 clearedCrystalPos = clearedCrystal.transform.localPosition;
 
             if (crystalPos.x == clearedCrystalPos.x && crystalPos.y > clearedCrystalPos.y)
             {
-                crystalsAbove.Add(crystalPool[i]);
+                crystalsAbove.Add(crystalsPool[i]);
             }
         }
 
         return crystalsAbove;
     }
 
-    private void ShiftUp(Crystal clearedCrystal, Crystal topCrystal)
+    public void CheckPossibleMove()
     {
-        var topCrystalRowNumber = gridManager.CalculateRowNumber(topCrystal);
-        var clearedCrystalRowNumber = gridManager.CalculateRowNumber(clearedCrystal);
+        if (!FindMatch())
+        {
+            List<Crystal> matchingCrystals = new List<Crystal>();
 
-        var rowNumberShift = topCrystalRowNumber - clearedCrystalRowNumber + 1;
-        var shiftedYPosition = gridManager.CalculateShiftedYPosition(clearedCrystal, rowNumberShift);
-
-        clearedCrystal.SetPosition(clearedCrystal.transform.localPosition.x, shiftedYPosition);
-        clearedCrystal.ShowUp(() =>
+            for (int i = 0; i < crystalsPool.Count; i++)
             {
-                if (!FindMatch())
+                for (int j = 0; j < raycastDirections.Length - 2; j++)
                 {
-                    CheckPossibleMove();
+                    for (int k = j + 1; k < raycastDirections.Length; k++)
+                    {
+                        RaycastHit2D firstHit = Physics2D.Raycast(crystalsPool[i].transform.position, raycastDirections[j]);
+                        RaycastHit2D secondHit = Physics2D.Raycast(crystalsPool[i].transform.position, raycastDirections[k]);
+
+                        if (firstHit.collider != null && secondHit.collider != null &&
+                            firstHit.collider?.GetComponent<Crystal>().CrystalColor == secondHit.collider?.GetComponent<Crystal>().CrystalColor)
+                        {
+                            firstHit.collider.GetComponent<Crystal>().CheckNeighbor(matchingCrystals, raycastDirections[j]);
+                            secondHit.collider.GetComponent<Crystal>().CheckNeighbor(matchingCrystals, raycastDirections[k]);
+                        }
+                    }
+
+                    if (matchingCrystals.Count > 2)
+                    {
+                        return;
+                    }
+                    matchingCrystals.Clear();
                 }
-            });
+            }
+            ResetField();
+        }
     }
 
-    private void CheckPossibleMove()
+    public void ResetField()
     {
-        List<Crystal> matchingBalls = new List<Crystal>();
-
-        for (int i = 0; i < crystalPool.Count; i++)
+        for (int i = 0; i < crystalsPool.Count; i++)
         {
-            for (int j = 0; j < hitDirections.Length - 2; j++)
-            {
-                for (int k = j + 1; k < hitDirections.Length; k++)
-                {
-                    RaycastHit2D firstHit = Physics2D.Raycast(crystalPool[i].transform.position, hitDirections[j]);
-                    RaycastHit2D secondHit = Physics2D.Raycast(crystalPool[i].transform.position, hitDirections[k]);
-
-                    if (firstHit.collider != null && secondHit.collider != null &&
-                        firstHit.collider?.GetComponent<Crystal>().CrystalType == secondHit.collider?.GetComponent<Crystal>().CrystalType)
-                    {
-                        firstHit.collider.GetComponent<Crystal>().CheckNeighbor(matchingBalls, hitDirections[j]);
-                        secondHit.collider.GetComponent<Crystal>().CheckNeighbor(matchingBalls, hitDirections[k]);
-                    }
-                }
-
-                if (matchingBalls.Count > 2)
-                {
-                    return;
-                }
-                matchingBalls.Clear();
-            }
+            crystalsPool[i].Clear((crystal) => crystal.Refill(() => FindMatch()));
         }
-        ResetField();
     }
 }

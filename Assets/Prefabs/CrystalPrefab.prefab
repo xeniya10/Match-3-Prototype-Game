@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1141195734417499476}
   - component: {fileID: 8015869075745215281}
   m_Layer: 0
-  m_Name: Crystal
+  m_Name: CrystalImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,7 +30,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7912162331826894175}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 2869224265697926186}
   - component: {fileID: 6683991230302586179}
   m_Layer: 0
-  m_Name: Select
+  m_Name: BorderImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -105,7 +105,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7912162331826894175}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -162,12 +162,12 @@ GameObject:
   - component: {fileID: 2363415669705832979}
   - component: {fileID: 490794562501450478}
   m_Layer: 0
-  m_Name: Clear
+  m_Name: SparkleImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5753748384294165110
 RectTransform:
   m_ObjectHideFlags: 0
@@ -180,7 +180,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7912162331826894175}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -237,6 +237,7 @@ GameObject:
   - component: {fileID: 6564967306600369660}
   - component: {fileID: 7459200027296165168}
   - component: {fileID: 7659700488957305241}
+  - component: {fileID: 8415067833518861796}
   m_Layer: 0
   m_Name: CrystalPrefab
   m_TagString: Untagged
@@ -255,9 +256,9 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 5753748384294165110}
   - {fileID: 3484435375039021715}
   - {fileID: 8323094438874904520}
-  - {fileID: 5753748384294165110}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -278,13 +279,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae941d78ced42cd4dae91c47ba517e1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  crystalRectTransform: {fileID: 7912162331826894175}
-  crystalSprites: {fileID: 11400000, guid: d6cb19ae8cc2a2845b9af7a3e9ac0756, type: 2}
+  prefabRectTransform: {fileID: 7912162331826894175}
+  spriteContainer: {fileID: 11400000, guid: d6cb19ae8cc2a2845b9af7a3e9ac0756, type: 2}
   crystalImage: {fileID: 8015869075745215281}
   borderImage: {fileID: 6683991230302586179}
   sparkleImage: {fileID: 490794562501450478}
-  CrystalType: 0
-  fadeTime: 0.1
+  crystalType: 0
+  crystalFadeTime: 0.2
+  sparkleFadeTime: 0.1
 --- !u!114 &7459200027296165168
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -367,3 +369,15 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 50, y: 50}
   m_EdgeRadius: 0
+--- !u!225 &8415067833518861796
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9171213816893339027}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0

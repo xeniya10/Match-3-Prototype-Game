@@ -5,13 +5,13 @@ public class GameController : MonoBehaviour
     [SerializeField] private CrystalController crystalController;
     [SerializeField] private ScreenManager screenManager;
     [SerializeField] private CrystalSprites crystalSprites;
-    private int currentMoves = 0;
-    private int currentTarget = 0;
-    private int TargetCrystalType = 0;
+    private int currentMovesNumber = 0;
+    private int currentTargetCrystalsNumber = 0;
 
     [Header("Game start options")]
-    public int StartMoves = 30;
-    public int StartTarget = 20;
+    public int startMovesNumber = 30;
+    public int startTargetCrystalsNumber = 20;
+    [SerializeField] private CrystalColor targetCrystalColor = 0;
 
     private void Awake()
     {
@@ -26,15 +26,6 @@ public class GameController : MonoBehaviour
         ResetMoves();
         RunTime();
         crystalController.ResetField();
-        crystalController.FindMatch();
-    }
-
-    private void CheckGameOver()
-    {
-        if (currentTarget < 1 || currentMoves < 1)
-        {
-            screenManager.OpenGameOver(currentTarget, currentMoves);
-        }
     }
 
     public void ExitGame()
@@ -45,43 +36,44 @@ public class GameController : MonoBehaviour
 
     private void ResetMoves()
     {
-        currentMoves = StartMoves;
-        screenManager.SetMovesNumber(currentMoves);
+        currentMovesNumber = startMovesNumber;
+        screenManager.SetMovesNumber(currentMovesNumber);
     }
 
     private void UpdateMoves()
     {
-        currentMoves = currentMoves - 1;
-        screenManager.SetMovesNumber(currentMoves);
+        currentMovesNumber = currentMovesNumber - 1;
+        screenManager.SetMovesNumber(currentMovesNumber);
 
-        if (currentMoves == 0)
+        if (currentMovesNumber == 0)
         {
-            screenManager.OpenGameOver(currentTarget, currentMoves);
+            screenManager.OpenGameOverScreen(currentTargetCrystalsNumber, currentMovesNumber);
         }
     }
 
     private void ResetGameTarget()
     {
-        currentTarget = StartTarget;
-        screenManager.SetTargetNumber(currentTarget);
+        currentTargetCrystalsNumber = startTargetCrystalsNumber;
+        screenManager.SetTargetNumber(currentTargetCrystalsNumber);
 
-        TargetCrystalType = Random.Range(0, crystalSprites.Sprites.Count);
-        screenManager.SetTargetSprite(TargetCrystalType);
+        int randomNumber = Random.Range(0, crystalSprites.sprites.Count);
+        targetCrystalColor = (CrystalColor)randomNumber;
+        screenManager.SetTargetSprite(randomNumber);
     }
 
-    private void UpdateTargetNumber(int crystalType, int crystalNumber)
+    private void UpdateTargetNumber(CrystalColor crystalColor, int crystalNumber)
     {
-        if (crystalType == TargetCrystalType)
+        if (crystalColor == targetCrystalColor)
         {
-            currentTarget = currentTarget - crystalNumber;
+            currentTargetCrystalsNumber = currentTargetCrystalsNumber - crystalNumber;
 
-            if (currentTarget < 1)
+            if (currentTargetCrystalsNumber < 1)
             {
-                currentTarget = 0;
-                screenManager.OpenGameOver(currentTarget, currentMoves);
+                currentTargetCrystalsNumber = 0;
+                screenManager.OpenGameOverScreen(currentTargetCrystalsNumber, currentMovesNumber);
             }
 
-            screenManager.SetTargetNumber(currentTarget);
+            screenManager.SetTargetNumber(currentTargetCrystalsNumber);
         }
     }
 
@@ -91,12 +83,12 @@ public class GameController : MonoBehaviour
 
     private void SubscribeToEvents()
     {
-        screenManager.OpenGameScreenEvent += StartGame;
-        screenManager.OpenMenuScreenEvent += PauseTime;
-        screenManager.OpenGameOverScreenEvent += PauseTime;
-        screenManager.ClickExitButtonEvent += ExitGame;
+        screenManager.openGameScreenEvent += StartGame;
+        screenManager.openMenuScreenEvent += PauseTime;
+        screenManager.openGameOverScreenEvent += PauseTime;
+        screenManager.clickExitButtonEvent += ExitGame;
 
-        crystalController.MoveMadeEvent += UpdateMoves;
-        crystalController.ClearMatchEvent += (crystalType, crystalNumber) => UpdateTargetNumber(crystalType, crystalNumber);
+        crystalController.swapEvent += UpdateMoves;
+        crystalController.matchedCrystalsClearedEvent += (crystalColor, crystalNumber) => UpdateTargetNumber(crystalColor, crystalNumber);
     }
 }

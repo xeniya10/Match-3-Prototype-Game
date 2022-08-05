@@ -1148,13 +1148,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31844af4f082980458e15486e0950c87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ColumnNumber: 5
-  RowNumber: 8
-  Padding: 100
-  Spacing: 20
-  CellSize: 0
-  CellOffset: 0
-  StartPosition: {x: 0, y: 0}
+  columnNumber: 5
+  rowNumber: 8
+  padding: 100
+  spacing: 20
+  cellSize: 0
+  cellOffset: 0
+  startCellPosition: {x: 0, y: 0}
 --- !u!114 &1048643490
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1519,8 +1519,8 @@ MonoBehaviour:
   crystalController: {fileID: 1048643490}
   screenManager: {fileID: 1652867449}
   crystalSprites: {fileID: 11400000, guid: d6cb19ae8cc2a2845b9af7a3e9ac0756, type: 2}
-  StartMoves: 30
-  StartTarget: 20
+  startMoves: 30
+  startTarget: 20
 --- !u!1 &1603982148
 GameObject:
   m_ObjectHideFlags: 0
@@ -1753,7 +1753,7 @@ MonoBehaviour:
   targetText: {fileID: 137817604}
   targetCrystalImage: {fileID: 576518733}
   gameResultText: {fileID: 2123253878}
-  crystalSprites: {fileID: 11400000, guid: d6cb19ae8cc2a2845b9af7a3e9ac0756, type: 2}
+  spriteContainer: {fileID: 11400000, guid: d6cb19ae8cc2a2845b9af7a3e9ac0756, type: 2}
   winText: WIN
   loseText: Game Over
 --- !u!4 &1652867450
@@ -1855,7 +1855,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1652867449}
         m_TargetAssemblyTypeName: ScreenManager, Assembly-CSharp
-        m_MethodName: ExitGame
+        m_MethodName: OnClickExitGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

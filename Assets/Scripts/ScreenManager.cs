@@ -8,20 +8,22 @@ public class ScreenManager : MonoBehaviour
     [SerializeField] private GameObject menuScreen;
     [SerializeField] private GameObject gameScreen;
     [SerializeField] private GameObject gameOverScreen;
+
     [Space]
     [SerializeField] private TextMeshProUGUI movesText;
     [SerializeField] private TextMeshProUGUI targetText;
     [SerializeField] private Image targetCrystalImage;
     [SerializeField] private TextMeshProUGUI gameResultText;
-    [SerializeField] private CrystalSprites crystalSprites;
+    [SerializeField] private CrystalSprites spriteContainer;
+
     [Header("Game Result")]
     [SerializeField] private string winText = "WIN";
     [SerializeField] private string loseText = "Game Over";
 
-    public event Action OpenGameScreenEvent;
-    public event Action OpenMenuScreenEvent;
-    public event Action OpenGameOverScreenEvent;
-    public event Action ClickExitButtonEvent;
+    public event Action openGameScreenEvent;
+    public event Action openMenuScreenEvent;
+    public event Action openGameOverScreenEvent;
+    public event Action clickExitButtonEvent;
 
     public void OpenMenuScreen()
     {
@@ -29,7 +31,7 @@ public class ScreenManager : MonoBehaviour
         menuScreen.SetActive(true);
         gameOverScreen.SetActive(false);
 
-        OpenMenuScreenEvent?.Invoke();
+        openMenuScreenEvent?.Invoke();
     }
 
     public void OpenGameScreen()
@@ -38,7 +40,7 @@ public class ScreenManager : MonoBehaviour
         menuScreen.SetActive(false);
         gameOverScreen.SetActive(false);
 
-        OpenGameScreenEvent?.Invoke();
+        openGameScreenEvent?.Invoke();
     }
 
     public void SetMovesNumber(int number)
@@ -53,16 +55,16 @@ public class ScreenManager : MonoBehaviour
 
     public void SetTargetSprite(int spriteNumber)
     {
-        Sprite sprite = crystalSprites.Sprites[spriteNumber];
+        Sprite sprite = spriteContainer.sprites[spriteNumber];
         targetCrystalImage.sprite = sprite;
     }
 
-    public void OpenGameOver(int crystalsTarget, int moves)
+    public void OpenGameOverScreen(int crystalsTarget, int moves)
     {
         SetGameResult(crystalsTarget, moves);
         gameOverScreen.SetActive(true);
 
-        OpenGameOverScreenEvent?.Invoke();
+        openGameOverScreenEvent?.Invoke();
     }
 
     private void SetGameResult(int crystalsTarget, int moves)
@@ -79,8 +81,8 @@ public class ScreenManager : MonoBehaviour
         }
     }
 
-    public void ExitGame()
+    public void OnClickExitGame()
     {
-        ClickExitButtonEvent?.Invoke();
+        clickExitButtonEvent?.Invoke();
     }
 }

@@ -4,5 +4,5 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "CrystalSprites", menuName = "ScriptableObject")]
 public class CrystalSprites : ScriptableObject
 {
-    public List<Sprite> Sprites = new List<Sprite>();
+    public List<Sprite> sprites = new List<Sprite>();
 }

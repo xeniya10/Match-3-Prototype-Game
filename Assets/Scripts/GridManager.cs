@@ -2,47 +2,38 @@ using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
-    public int ColumnNumber = 5;
-    public int RowNumber = 8;
-    public int Padding = 100;
-    public int Spacing = 20;
-    public float CellSize = 0;
-    [HideInInspector] public float CellOffset = 0;
-    [HideInInspector] public Vector2 StartPosition;
+    public int columnNumber = 5;
+    public int rowNumber = 8;
+    public int padding = 100;
+    public int spacing = 20;
+    public float cellSize = 0;
 
-    public void CalculateFieldParameters()
+    /// <summary>Offset between local position of two nearest cells.</summary>
+    [HideInInspector] public float cellOffset = 0;
+    [HideInInspector] public Vector2 startCellPosition;
+
+    /// <summary>Calculate size and offset of cells, cell start position.</summary>
+    public void CalculateGridParameters()
     {
         CalculateCellParameters();
-        CalculateStartPosition();
+        CalculateStartCellPosition();
     }
 
     private void CalculateCellParameters()
     {
         int paddingNumber = 2;
-        int spacingNumber = ColumnNumber - 1;
+        int spacingNumber = columnNumber - 1;
 
-        float cellSpace = Screen.width - paddingNumber * Padding - spacingNumber * Spacing;
-        CellSize = cellSpace / ColumnNumber;
-        CellOffset = CellSize + Spacing;
+        float cellSpace = Screen.width - paddingNumber * padding - spacingNumber * spacing;
+        cellSize = cellSpace / columnNumber;
+        cellOffset = cellSize + spacing;
     }
 
-    private void CalculateStartPosition()
+    private void CalculateStartCellPosition()
     {
-        StartPosition = new Vector2();
+        startCellPosition = new Vector2();
 
-        StartPosition.x = -Screen.width / 2 + CellSize / 2 + Padding;
-        StartPosition.y = CellSize / 2 + Padding;
-    }
-
-    public float CalculateRowNumber(Crystal crystal)
-    {
-        float rowNumber = 1 + (crystal.transform.localPosition.y - StartPosition.y) / CellOffset;
-        return rowNumber;
-    }
-
-    public float CalculateShiftedYPosition(Crystal crystal, float rowShiftNumber)
-    {
-        float shiftedYPosition = crystal.transform.localPosition.y + CellOffset * rowShiftNumber;
-        return shiftedYPosition;
+        startCellPosition.x = -Screen.width / 2 + cellSize / 2 + padding;
+        startCellPosition.y = cellSize / 2 + padding;
     }
 }
